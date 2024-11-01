@@ -1,1 +1,80 @@
 import pandas as pd
+
+# read csv file
+songs_data = pd.read_csv("tabdb.csv")
+
+# store filters from users in dictionary
+filters_dic = {"artist": input(
+    "Enter name of the artist to filter by (or press Enter to skip): "),
+    "year": input("Enter a year to filter by (or press Enter to skip): "),
+    "type": input("Enter type to filter by (or press Enter to skip): "),
+    "gender": input("Enter gender to filter by (or press Enter to skip): "),
+    "duration": input("Enter duration to filter by (or press Enter to skip): "),
+    "language": input("Enter language to filter by (or press Enter to skip): "),
+    "tabber": input("Enter tabber to filter by (or press Enter to skip): "),
+    "source": input("Enter source to filter by (or press Enter to skip): "),
+    "date": input("Enter date to filter by (or press Enter to skip): "),
+    "difficulty": input("Enter difficulty level to filter by (or press Enter to skip): "),
+    "specialbooks": input("Enter specialbooks to filter by (or press Enter to skip): ")
+}
+# convert numeric filters to the correct type if provided
+try:
+    filters_dic["year"] = int(
+        filters_dic["year"]) if filters_dic["year"] else None
+except ValueError:
+    print("Invalid year input. Skipping year filter.")
+    filters_dic["year"] = None
+
+try:
+    filters_dic["duration"] = int(
+        filters_dic["duration"]) if filters_dic["duration"] else None
+except ValueError:
+    print("Invalid duration input. Skipping duration filter.")
+    filters_dic["duration"] = None
+
+try:
+    filters_dic["difficulty"] = int(
+        filters_dic["difficulty"]) if filters_dic["difficulty"] else None
+except ValueError:
+    print("Invalid difficulty input. Skipping difficulty filter.")
+    filters_dic["difficulty"] = None
+
+# create a none empty filter list,only append filters users provided
+conditions = []
+if filters_dic["artist"]:
+    conditions.append(songs_data["artist"] == filters_dic["artist"])
+if filters_dic["year"]:
+    conditions.append(songs_data["year"] == filters_dic["year"])
+if filters_dic["type"]:
+    conditions.append(songs_data["type"] == filters_dic["type"])
+if filters_dic["gender"]:
+    conditions.append(songs_data["gender"] == filters_dic["gender"])
+if filters_dic["duration"]:
+    conditions.append(songs_data["duration"] == filters_dic["duration"])
+if filters_dic["language"]:
+    conditions.append(songs_data["language"] == filters_dic["language"])
+if filters_dic["tabber"]:
+    conditions.append(songs_data["tabber"] == filters_dic["tabber"])
+if filters_dic["source"]:
+    conditions.append(songs_data["source"] == filters_dic["source"])
+if filters_dic["date"]:
+    conditions.append(songs_data["date"] == filters_dic["date"])
+if filters_dic["difficulty"]:
+    conditions.append(songs_data["difficulty"] == filters_dic["difficulty"])
+if filters_dic["specialbooks"]:
+    conditions.append(songs_data["specialbooks"]
+                      == filters_dic["specialbooks"])
+
+# apply filters in songs data set
+if conditions:
+    filter_song = songs_data[conditions[0]]
+    for condition in conditions[1:]:
+        filter_song = filter_song[condition]
+        song_name = filter_song["song"]
+    if len(song_name) > 0:
+        print(f"{len(song_name)} songs found:")
+        print(song_name)
+    else:
+        print("0 result found, please try again")
+else:
+    print("Please enter at least one filter")
